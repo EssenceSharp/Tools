@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <st-source>
-<time-stamp>From VisualWorks® Personal Use Edition, 7.10.1 of February 6, 2014 on July 7, 2014 at 2:25:48 PM</time-stamp>
+<time-stamp>From VisualWorks® Personal Use Edition, 7.10.1 of February 6, 2014 on July 18, 2014 at 2:15:44 PM</time-stamp>
 
 
 <class>
@@ -147,7 +147,7 @@
 
 <body package="Essence#" selector="exportMetaclassDefinition:">exportMetaclassDefinition: aMetaclass	| pathname stream  instVarNames |		instVarNames := aMetaclass instVarNames.	pathname := 		self class				constructPathnameFromPrefix: self outputPathname				path: (Array with: aMetaclass soleInstance name with: 'metaclass.configure').	stream := self newWriteStream: pathname.	[stream		tab;		nextPutAll: '"Configuration of the instance architecture, initial state and module memberships of ';		nextPutAll: aMetaclass name;		nextPut: $".		instVarNames  size &gt; 1			ifTrue: 				[stream					cr; cr; tab;					nextPutAll: 'instanceVariableNames: ';					nextPutAll: instVarNames storeString]] ensure: [stream close]</body>
 
-<body package="Essence#" selector="exportMethodIn:source:on:">exportMethodIn: protocol source: source on: stream	| lines |	stream		tab;		nextPutAll: 'protocol: ';		nextPutAll: protocol asSymbol printString;		nextPutAll: ' method:';		cr; tab;		nextPutAll: '[## '.	lines := self linesOf: (self withoutEnclosingWhitespace: source asString).	stream nextPutAll: (lines at: 1).	2 to: lines size do: 		[:index | 			stream 				cr; tab: 2;				nextPutAll: (lines at: index)].	stream cr; tab; nextPut: $]</body>
+<body package="Essence#" selector="exportMethodIn:source:on:">exportMethodIn: protocol source: source on: stream	| lines |	stream		tab;		nextPutAll: 'protocol: ';		nextPutAll: protocol asSymbol printString;		nextPutAll: ' method:';		cr; cr; tab;		nextPutAll: '[## '.	lines := self linesOf: (self withoutEnclosingWhitespace: source asString).	stream nextPutAll: (lines at: 1).	2 to: lines size do: 		[:index | 			stream 				cr; tab: 2;				nextPutAll: (lines at: index)].	stream cr; tab; nextPut: $]</body>
 
 <body package="Essence#" selector="exportMethodsOf:">exportMethodsOf: aBehavior 	| isMeta className pathname stream nextRequiresCascadeContinuation |	isMeta := aBehavior isMeta.	className := isMeta ifTrue: [aBehavior soleInstance name] ifFalse: [aBehavior name].	pathname := 		self class				constructPathnameFromPrefix: self outputPathname				path: (Array						with: className						with: (isMeta								ifTrue: ['methods.class']								ifFalse: ['methods.instance'])).	stream := self newWriteStream: pathname.	[stream 		tab; 		nextPut: $";		nextPutAll: (isMeta ifTrue: ['Class'] ifFalse: ['Instance']); 		nextPutAll: ' methods for '; 		nextPutAll: className; 		nextPut: $"; 		cr; cr.	(self protocolsOf: aBehavior)		do: [:protocol | 				nextRequiresCascadeContinuation := false.				(self selectorsOf: aBehavior inProtocol: protocol)					do: [:selector | 						self							exportMethodIn: protocol							source: (aBehavior sourceCodeAt: selector) asString							on: stream.						nextRequiresCascadeContinuation := true]				separatedBy: 					[stream nextPut: $;; cr; cr]]		separatedBy: [nextRequiresCascadeContinuation ifTrue: [stream nextPut: $;; cr; cr]]] 			ensure: [stream close]</body>
 
